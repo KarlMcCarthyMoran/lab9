@@ -1,0 +1,24 @@
+name: Lab9 Basic Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lab9-basic-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run validation tests
+        run: |
+          chmod +x validate-data.sh
+
+          test "$(./validate-data.sh John 0871234567)" = "PASS"
+          test "$(./validate-data.sh ChristopherJohnson 0871234567)" = "FAIL"
+          test "$(./validate-data.sh Mary 087123456789)" = "FAIL"
+
+          echo "All three tests passed!"
