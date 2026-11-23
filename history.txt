@@ -1,0 +1,151 @@
+  328  cd devopss
+  329  ls
+  330  mkdir lab9
+  331  ls
+  332  cd lab9
+  333  gh auth login
+  334  gh UTH STATUS
+  335  gh auth status
+  336  gh auth login
+  337  gh auth status
+  338  gh -- version
+  339  gh --version
+  340  gh auth login --web
+  341  gh auth status
+  342  gh auth login
+  343  git init -b main
+  344  gh repo create lab9 --public --source=. --remote=origin
+  345  gh label create "EPIC" --color "5319E7" --description "Epic issue for Lab 9"
+  346  gh issue create --title "do lab9" --body "Complete all tasks for Lab 9 GitHub Actions." --label "EPIC"
+  347  gh issue create --title "create validate-data script" --body "Create a script to validate a name and mobile number." --label "enhancement" --assignee "@me"
+  348  cat > validate-data.sh <<'EOF'
+  349  #!/bin/bash
+  350  name="$1"
+  351  mobile="$2"
+  352  if [ ${#name} -le 15 ] && [ ${#mobile} -le 10 ]; then
+  353      echo "PASS"
+  354  else
+  355      echo "FAIL"
+  356  fi
+  357  EOF
+  358  chmod +x validate-data.sh
+  359  ./validate-data.sh KarlMcCarthy 087 397 3772
+  360  ./validate-data.sh KarlMcCarthyMoran 0861356376
+  361  ./validate-data.sh Pearse 08934564578
+  362  gh issue list
+  363  gh issue close 2
+  364  gh issue create --title "create yaml test script" --body "Create GitHub Actions workflow to test validate-data.sh." --label "enhancement" --assignee "@me"
+  365  gh issue list
+  366  mkdir -p .github/workflows
+  367  cat > .github/workflows/basictests.yml <<'EOF'
+  368  name: Lab9 Basic Tests
+  369  on:
+  370    push:
+  371      branches:
+  372        - main
+  373  jobs:
+  374    lab9-basic-tests:
+  375      runs-on: ubuntu-latest
+  376      steps:
+  377        - name: Checkout reposito
+  378  cat > .github/workflows/basictests.yml <<'EOF'
+  379  name: Lab9 Basic Tests
+  380  on:
+  381    push:
+  382      branches:
+  383        - main
+  384  jobs:
+  385    lab9-basic-tests:
+  386      runs-on: ubuntu-latest
+  387      steps:
+  388        - name: Checkout repository
+  389          uses: actions/checkout@v4
+  390        - name: Run validation tests
+  391          run: |
+  392            chmod +x validate-data.sh
+  393            test "$(./validate-data.sh John 0871234567)" = "PASS"
+  394            test "$(./validate-data.sh ChristopherJohnson 0871234567)" = "FAIL"
+  395            test "$(./validate-data.sh Mary 087123456789)" = "FAIL"
+  396            echo "All three tests passed!"
+  397  EOF
+  398  git add .
+  399  git commit -m "Add validation script and github action tests"
+  400  git push -u origin main
+  401  gh issue list
+  402  gh issue close 3
+  403  gh issue create --title "create lab9 project" --body "Create project table with Label, Title and Assignee columns." --label "enhancement" --assignee "@me"
+  404  gh issue list
+  405  gh issue close 4
+  406  gh issue create --title "create test branch" --body "Create a test branch, update name limit and enable GitHub Actions." --label "enhancement" --assignee "@me"
+  407  git switch -c test
+  408  sed -i 's/-le 15/-le 20/' validate-data.sh
+  409  cat validate-data.sh
+  410  git add .
+  411  git commit -m "Increase maximum name length to 20"
+  412  git push -u origin test
+  413  python3 - <<'PY'
+  414  from pathlib import Path
+  415  p = Path(".github/workflows/basictests.yml")
+  416  s = p.read_text()
+  417  s = s.replace(
+  418      "    branches:\n      - main\n",
+  419      "    branches:\n      - main\n      - test\n"
+  420  )
+  421  p.write_text(s)
+  422  PY
+  423  cat .github/workflows/basictests.yml
+  424  git add .
+  425  git commit -m "runs test on main and test branch"
+  426  git push origin test
+  427  cat > .github/workflows/basictests.yml <<'EOF'
+  428  name: Lab9 Basic Tests
+  429  on:
+  430    push:
+  431      branches:
+  432        - main
+  433        - test
+  434  jobs:
+  435    lab9-basic-tests:
+  436      runs-on: ubuntu-latest
+  437      steps:
+  438        - name: Checkout repository
+  439          uses: actions/checkout@v4
+  440        - name: Run validation tests
+  441          run: |
+  442            chmod +x validate-data.sh
+  443            ./validate-data.sh John 0871234567
+  444            ./validate-data.sh ChristopherJonathanJohnson 0871234567
+  445            ./validate-data.sh Mary 087123456789
+  446  EOF
+  447  git add .github/workflows/basictests.yml
+  448  git commit -m "Update workflow tests for both name limits"
+  449  git push origin test
+  450  cat > .github/workflows/basictests.yml <<'EOF'
+  451  name: Lab9 Basic Tests
+  452  on:
+  453    push:
+  454      branches:
+  455        - main
+  456        - test
+  457  jobs:
+  458    lab9-basic-tests:
+  459      runs-on: ubuntu-latest
+  460      steps:
+  461        - name: Checkout repository
+  462          uses: actions/checkout@v4
+  463        - name: Run validation tests
+  464          run: |
+  465            chmod +x validate-data.sh
+  466            ./validate-data.sh John 0871234567
+  467            ./validate-data.sh ChristopherJohnson 0871234567
+  468            ./validate-data.sh Mary 087123456789
+  469  EOF
+  470  git add .github/workflows/basictests.yml
+  471  git commit -m "Update workflow tests for both name limits with name fix mistake chris"
+  472  git push origin test
+  473  cd devopss
+  474  cd lab9
+  475  gh auth status
+  476  history > history.txt
+  477  nano histroy.txt
+  478  history > history.txt
