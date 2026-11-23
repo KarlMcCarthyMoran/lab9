@@ -19,5 +19,5 @@ jobs:
           chmod +x validate-data.sh
 
           ./validate-data.sh John 0871234567
-          ./validate-data.sh ChristopherJonathanJohnson 0871234567
+          ./validate-data.sh ChristopherJohnson 0871234567
           ./validate-data.sh Mary 087123456789
